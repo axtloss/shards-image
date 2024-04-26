@@ -1,26 +1,14 @@
 name: essentials
-type: apt
-source:
-  packages:
-  - setserial
-  - systemd-sysv
-  - user-setup
-  - console-setup
+type: pacman
+packages:
+  - systemd-sysvcompat
   - sudo
   - acpi
-  - policykit-1
+  - polkit
   - bc
-  - pcmciautils
-  - samba-common-bin
   - ibus
   - ibus-table
   - laptop-detect
   - efibootmgr
-  - grub-efi-amd64
-  - grub-efi-amd64-bin
-  - grub-efi-amd64-signed
-  - shim-signed
-  - shim-helpers-amd64-signed
-  - uidmap
+  - grub
   - minisign
-  - zram-tools

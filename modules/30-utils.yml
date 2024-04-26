@@ -1,13 +1,11 @@
 name: utils
-type: apt
-source:
-  packages:
+type: pacman
+packages:
   - nano
   - zsync
   - rsync
   - dialog
   - less
   - curl
-  - tracker
+  - tracker3
   - bash-completion
-  - libnss-myhostname

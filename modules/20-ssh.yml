@@ -1,10 +1,7 @@
 name: ssh
-type: apt
-source:
-  packages:
-  - gpg
-  - gpg-agent
-  - dirmngr
+type: pacman
+packages:
+  - gnupg
   - ca-certificates
-  - openssh-server
+  - openssh
   - spice-vdagent

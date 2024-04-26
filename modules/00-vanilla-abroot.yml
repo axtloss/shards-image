@@ -1,15 +1,19 @@
 name: abroot
 type: shell
 source:
-  type: tar
+  type: git
   # switch to production build once in production
-  url: https://github.com/Vanilla-OS/ABRoot/releases/download/continuous/abrootv2.tar.gz
+  url: https://github.com/Vanilla-OS/ABRoot.git
+  branch: main
+  commit: latest
 commands:
-  - apt install -y podman golang-github-containers-common patch wget
+  - pacman -S --noconfirm podman containers-common patch wget go gcc btrfs-progs dpkg pkgconf
+  - cd /sources/abroot
+  - CGO_ENABLED=1 go build
   - mkdir -p /usr/bin
-  - cp /sources/abrootv2 /usr/bin/abroot
+  - cp /sources/abroot/abroot /usr/bin/abroot
   - chmod +x /usr/bin/abroot
-  - dpkg-divert --add --rename --divert /usr/bin/crun.original /usr/bin/crun
+  - mv /usr/bin/crun /usr/bin/crun.original
   - wget https://github.com/containers/crun/releases/download/1.14.4/crun-1.14.4-linux-amd64 -O /usr/bin/crun
   - chmod +x /usr/bin/crun
 modules:
@@ -19,4 +23,5 @@ modules:
     type: tar
     url: https://github.com/Vanilla-OS/ABRoot/releases/download/continuous/abroot-man.tar.gz
   commands:
-  - mv /sources/man/man1/abroot.1 /usr/share/man/man1/
+    - mkdir -p /usr/share/man/man1
+    - mv /sources/abroot-manpage/man/man1/abroot.1 /usr/share/man/man1/

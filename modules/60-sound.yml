@@ -1,9 +1,7 @@
 name: sound
-type: apt
-source:
-  packages:
+type: pacman
+packages:
   - pipewire-pulse
   - pipewire-alsa
   - wireplumber
   - alsa-utils
-  - alsa-firmware-loaders

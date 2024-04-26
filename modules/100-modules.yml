@@ -1,11 +1,8 @@
 name: modules
-type: apt
-source:
-  packages:
+type: pacman
+packages:
   - dkms
   - bolt
-  - inputattach
+  - linuxconsole
   - iucode-tool
-  - cryptsetup-initramfs
-  - acpi-call-dkms
-  - libsasl2-modules
+  - libsasl

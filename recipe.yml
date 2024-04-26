@@ -3,28 +3,26 @@ id: vanilla-core
 
 stages:
 - id: build
-  base: ghcr.io/vanilla-os/pico:main
+  base: docker.io/library/archlinux:latest
   singlelayer: false
   labels:
-    maintainer: Vanilla OS Contributors
-  args:
-    DEBIAN_FRONTEND: noninteractive
-  runs:
-  - echo 'APT::Install-Recommends "1";' > /etc/apt/apt.conf.d/01norecommends
+    maintainer: xenia <axtlos@distroot.org>
 
   modules:
   - name: mandb
     type: shell
     commands:
-    - apt update
-    - apt install -y man-db
+    - ls -al /usr
+    - mv /usr/sbin/* /usr/bin/
+    - rmdir /usr/sbin
+    - pacman -Syu --noconfirm
+    - pacman -S --noconfirm man-db
     - mandb -c
 
   - name: packages-modules
     type: includes
     includes:
       - modules/00-vanilla-abroot.yml
-      - modules/00-vanilla-base-files.yml
       - modules/00-vanilla-apx.yml
       - modules/00-vanilla-apx-stacks.yml
       - modules/00-vanilla-ikaros.yml
@@ -43,10 +41,7 @@ stages:
       - modules/110-fwupd.yml
       - modules/120-fingerprint.yml
       - modules/130-kernel.yml
-      - modules/140-manpages.yml
       - modules/998-podman-registry.yml
-      - modules/999-replace-locale-gen.yml
-      - modules/999-remove-grub-files.yml
 
   - name: zram-config
     type: shell
@@ -54,32 +49,23 @@ stages:
       - echo -e "ALGO=lz4\nPERCENT=50" >> /etc/default/zramswap
 
   - name: fsguard-runtime-deps
-    type: apt
-    source:
-      packages:
-        - "minisign"
-        - "squashfs-tools"
-        - "python3"
+    type: pacman
+    packages:
+      - "minisign"
+      - "squashfs-tools"
+      - "python"
 
   - name: cleanup1
     type: shell
     commands:
-    - apt remove -y linux-image-rt-amd64 linux-image-6.7.9-rt-amd64
-    - apt remove -y dpkg-dev build-essential
-    - apt autoremove -y
-    - apt clean
+    - pacman -Scc --noconfirm
+    - pacman -Qdtq | pacman -Rs --noconfirm -
 
   - name: fsguard
     type: fsguard
     FsGuardLocation: "/usr/sbin/FsGuard"
     GenerateKey: true
     FilelistPaths: ["/usr/bin"]
-    modules:
-      - name: minisign
-        type: apt
-        source:
-          packages:
-            - "minisign"
 
   - name: cleanup2
     type: shell
@@ -88,4 +74,3 @@ stages:
       - rm -rf /tmp/*
       - rm -rf /var/tmp/*
       - rm -rf /sources
-      - mkdir -p /var/cache/apt/archives/partial
